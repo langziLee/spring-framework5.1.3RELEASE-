@@ -135,9 +135,11 @@ class ConfigurationClassBeanDefinitionReader {
 		}
 
 		if (configClass.isImported()) {
+			// 将import中的类注册到BeanDefinition中
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
+			// 主要是添加factoryMethod
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
 

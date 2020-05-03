@@ -351,6 +351,7 @@ public abstract class DataSourceUtils {
 	 */
 	public static void doCloseConnection(Connection con, @Nullable DataSource dataSource) throws SQLException {
 		if (!(dataSource instanceof SmartDataSource) || ((SmartDataSource) dataSource).shouldClose(con)) {
+			// 回收
 			con.close();
 		}
 	}

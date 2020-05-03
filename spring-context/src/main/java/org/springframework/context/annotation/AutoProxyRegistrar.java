@@ -58,17 +58,20 @@ public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
 	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 		boolean candidateFound = false;
 		Set<String> annoTypes = importingClassMetadata.getAnnotationTypes();
+		// 获取类上的所有注解（@Component, @EnableTransactionManagement, @MapperScan）
 		for (String annoType : annoTypes) {
 			AnnotationAttributes candidate = AnnotationConfigUtils.attributesFor(importingClassMetadata, annoType);
 			if (candidate == null) {
 				continue;
 			}
+			// 从 @EnableTransactionManagement中获取mode属性 （因为只有该标签有mode属性）（默认是PROXY）
 			Object mode = candidate.get("mode");
 			Object proxyTargetClass = candidate.get("proxyTargetClass");
 			if (mode != null && proxyTargetClass != null && AdviceMode.class == mode.getClass() &&
 					Boolean.class == proxyTargetClass.getClass()) {
 				candidateFound = true;
 				if (mode == AdviceMode.PROXY) {
+					// 注册AOP的入口类InfrastructureAdvisorAutoProxyCreator (没有任何作用的)
 					AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry);
 					if ((Boolean) proxyTargetClass) {
 						AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);

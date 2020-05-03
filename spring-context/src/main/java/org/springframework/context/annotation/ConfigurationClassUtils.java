@@ -111,17 +111,17 @@ abstract class ConfigurationClassUtils {
 				return false;
 			}
 		}
-
+		// 判断是否有@Configration注解, 属性为full
 		if (isFullConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
-		}
+		} // 判断是类上是否有@Component, @ComponentScan, @Import, @ImportResource或者方法有@Bean, 属性为 lite
 		else if (isLiteConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}
 		else {
 			return false;
 		}
-
+		// 获取@Order标签的值
 		// It's a full or lite configuration candidate... Let's determine the order value, if any.
 		Integer order = getOrder(metadata);
 		if (order != null) {

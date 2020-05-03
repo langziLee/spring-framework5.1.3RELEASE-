@@ -511,6 +511,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
+			// 为容器初始化做准备
 			// Prepare this context for refreshing.
 			prepareRefresh();
 
@@ -524,24 +525,50 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Allows post-processing of the bean factory in context subclasses.
 				postProcessBeanFactory(beanFactory);
 
+				/*
+				 * BeanDefinitionRegistryPostProcessor
+				 * BeanFactoryPostProcessor
+				 * 完成这两个接口的调用
+				 * */
 				// Invoke factory processors registered as beans in the context.
 				invokeBeanFactoryPostProcessors(beanFactory);
 
+				/*
+				 * 把实现了BeanFactoryPostProcessor接口类实例化。 并且加到BeanFactroy
+				 * */
 				// Register bean processors that intercept bean creation.
 				registerBeanPostProcessors(beanFactory);
 
+				/*
+				 * 国际化 重要程度:**
+				 */
 				// Initialize message source for this context.
 				initMessageSource();
 
+				/*
+				 * 初始化事件管理类   重要程度:***
+				 */
 				// Initialize event multicaster for this context.
 				initApplicationEventMulticaster();
 
+				// 这个方法着重理解模板设计模式。在springboot中，这个是做内嵌tomcat启动的
 				// Initialize other special beans in specific context subclasses.
 				onRefresh();
 
+				// 往事件管理器中注册事件的    重要程度:*****
 				// Check for listener beans and register them.
 				registerListeners();
 
+				/*
+				 * 1、bean实例化过程
+				 * 2、ioc
+				 * 3、循环依赖
+				 * 4、注解支持
+				 * 5、BeanPostProcessor的执行
+				 * 6、aop入口
+				 *
+				 * 重要程度:***
+				 */
 				// Instantiate all remaining (non-lazy-init) singletons.
 				finishBeanFactoryInitialization(beanFactory);
 

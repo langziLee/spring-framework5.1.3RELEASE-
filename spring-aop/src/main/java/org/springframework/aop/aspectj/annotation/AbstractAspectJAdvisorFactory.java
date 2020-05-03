@@ -131,6 +131,7 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	@Nullable
 	protected static AspectJAnnotation<?> findAspectJAnnotationOnMethod(Method method) {
 		for (Class<?> clazz : ASPECTJ_ANNOTATION_CLASSES) {
+			// 将注解的信息封装到AspectJAnnotation对象中
 			AspectJAnnotation<?> foundAnnotation = findAnnotation(method, (Class<Annotation>) clazz);
 			if (foundAnnotation != null) {
 				return foundAnnotation;
@@ -143,6 +144,7 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	private static <A extends Annotation> AspectJAnnotation<A> findAnnotation(Method method, Class<A> toLookFor) {
 		A result = AnnotationUtils.findAnnotation(method, toLookFor);
 		if (result != null) {
+			// 获取AspectJAnnotation对象
 			return new AspectJAnnotation<>(result);
 		}
 		else {
@@ -191,9 +193,14 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 
 		public AspectJAnnotation(A annotation) {
 			this.annotation = annotation;
+			// 获取注解的类型
 			this.annotationType = determineAnnotationType(annotation);
 			try {
+				// 解析注解上面的表达式
+				// 如：@Around(value = "pc1()")
+				// 如：@AfterReturning(pointcut = "execution(public * com.lichao.service.*.*(..))")
 				this.pointcutExpression = resolveExpression(annotation);
+				// 获取注解的参数
 				Object argNames = AnnotationUtils.getValue(annotation, "argNames");
 				this.argumentNames = (argNames instanceof String ? (String) argNames : "");
 			}
